@@ -7,6 +7,7 @@ import lombok.Setter;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 @Setter
 @Getter
@@ -23,5 +24,11 @@ public class OrderBook {
         this.bids = bids;
         this.lastChange = Instant.now();
         this.sequenceNumber = Instant.now().toEpochMilli();
+    }
+
+    public <E> OrderBook(Set<Order> asks, Instant lastChange, Long sequenceNumber) {
+        this.asks = asks;
+        this.lastChange = lastChange;
+        this.sequenceNumber = sequenceNumber;
     }
 }

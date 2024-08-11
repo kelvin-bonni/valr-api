@@ -25,4 +25,12 @@ public class Order {
         this.id = id;
         this.quantity = quantity;
     }
+
+    public Order(String id, Side side, Double quantity, Long price, CurrencyPair pair) {
+        this.id = id;
+        this.side = side;
+        this.quantity = quantity;
+        this.price = price;
+        this.currencyPair = pair;
+    }
 }

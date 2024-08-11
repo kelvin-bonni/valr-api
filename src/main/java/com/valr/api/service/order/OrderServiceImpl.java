@@ -1,5 +1,6 @@
 package com.valr.api.service.order;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.valr.api.model.order.CurrencyPair;
 import com.valr.api.model.order.Order;
 import com.valr.api.model.order.OrderBook;
@@ -7,6 +8,9 @@ import com.valr.api.model.order.Side;
 import com.valr.api.model.trade.Trade;
 import com.valr.api.utils.IdGenerator;
 import com.valr.api.utils.Locker;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,9 +21,14 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class OrderServiceImpl implements OrderService{
     @Autowired
     Locker locker;
+    @Autowired
+    IdGenerator idGenerator;
 
     private Map<CurrencyPair, OrderBook> orderBooks = new HashMap<>();
     private Map<CurrencyPair, List<Trade>> recentTrades = new HashMap<>();
@@ -45,14 +54,14 @@ public class OrderServiceImpl implements OrderService{
                 remainingQuantity = matchOrder(order, orderBook.getAsks(), orderBook, order.getCurrencyPair());
                 if (remainingQuantity > 0.0) {
                     // Add remaining quantity as a new buy order
-                    Order remainingOrder = new Order(IdGenerator.generate(), order.getSide(), remainingQuantity, order.getPrice(), order.getCurrencyPair(), order.getTimestamp());
+                    Order remainingOrder = new Order(idGenerator.generate(), order.getSide(), remainingQuantity, order.getPrice(), order.getCurrencyPair(), order.getTimestamp());
                     orderBook.setBids(new HashSet<>(Set.of(remainingOrder)));
                 }
             }else if(Side.SELL == order.getSide()){
                 remainingQuantity = matchOrder(order, orderBook.getBids(), orderBook, order.getCurrencyPair());
                 if (remainingQuantity > 0.0) {
                     // Add remaining quantity as a new sell order
-                    Order remainingOrder = new Order(IdGenerator.generate(), order.getSide(), remainingQuantity, order.getPrice(), order.getCurrencyPair(), order.getTimestamp());
+                    Order remainingOrder = new Order(idGenerator.generate(), order.getSide(), remainingQuantity, order.getPrice(), order.getCurrencyPair(), order.getTimestamp());
                     orderBook.setAsks(new HashSet<>(Set.of(remainingOrder)));
                 }
             }

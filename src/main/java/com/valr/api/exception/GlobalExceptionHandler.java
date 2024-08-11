@@ -1,15 +1,13 @@
 package com.valr.api.exception;
 
-import jakarta.validation.ConstraintViolationException;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.context.request.WebRequest;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,30 +16,17 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler {
 
     //handles MethodArgumentNotValidException
-//    @ExceptionHandler(MethodArgumentNotValidException.class)
-//    protected ModelAndView handleMethodArgumentNotValidException(
-//            MethodArgumentNotValidException ex) {
-//        List<String> errors = ex.getBindingResult()
-//                .getAllErrors()
-//                .stream()
-//                .map(DefaultMessageSourceResolvable::getDefaultMessage)
-//                .collect(Collectors.toList());
-//
-//        final ModelAndView modelAndView = new ModelAndView();
-//        modelAndView.addObject("message", errors);
-//        modelAndView.setViewName("error-book");
-//        return modelAndView;
-//    }
-//
-//    @ExceptionHandler(ConstraintViolationException.class)
-//    protected ModelAndView handleConstraintViolationException(ConstraintViolationException ex) {
-//        List<String> errors = new ArrayList<>();
-//
-//        ex.getConstraintViolations().forEach(cv -> errors.add(cv.getMessage()));
-//
-//        final ModelAndView modelAndView = new ModelAndView();
-//        modelAndView.addObject("message", errors);
-//        modelAndView.setViewName("error-book");
-//        return modelAndView;
-//    }
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Object> handleValidationExceptions(
+            MethodArgumentNotValidException ex,
+            WebRequest request) {
+
+        // Extract field errors from the binding result
+        List<String> errors = ex.getBindingResult().getFieldErrors().stream()
+                .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                .collect(Collectors.toList());
+
+        // Return a bad request response with the error messages
+        return ResponseEntity.badRequest().body(errors);
+    }
 }
