@@ -1,14 +1,31 @@
-## VALR Book Order API
+# VALR Book Order API
+
+# Getting Started
+
+## Dependencies
+This project makes use of
+* Java
+* Gradle
+* Spring Boot
+* Spring Security with JWT
+* Swagger for documentation
 
 ### Pre-requisite
 1. Install docker from - https://docs.docker.com/get-docker/
-2. Clone the repo from https://github.com/kelvin-bonni/valr-api.git
 
 ### Setup
 1. Start docker
-2. Navigate to the project directory on command line/terminal : `cd ../valr-api`
-3. Run the app using `docker-compose up`
-4. The application can be accessed at `http:localhost:8080`
+2. Clone the repo from https://github.com/kelvin-bonni/valr-api.git
+3. Navigate to the project directory on command line/terminal : `cd ../valr-api`
+4. Run the app using `docker-compose up`
+5. The application can be accessed at `http:localhost:8080`
+6. The documentation can be accessed at `http:localhost:8080/swagger-ui.html`
+
+```shell script
+git clone https://github.com/kelvin-bonni/valr-api.git
+cd ../valr-api
+docker-compose up
+```
 
 ### Endpoints
 The following cURL commands or the postman collection attached can be used to test the endpoints

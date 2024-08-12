@@ -10,6 +10,8 @@ import com.valr.api.model.order.Order;
 import com.valr.api.model.order.OrderBook;
 import com.valr.api.model.trade.Trade;
 import com.valr.api.service.order.OrderService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -19,9 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Tag(
-        name = "OrderBookController",
-        description = "HTTP Restful API for book order management")
+@Tag(name = "OrderBookController", description = "The controller for managing the book orders")
 @RequestMapping("/api/v1")
 @RestController
 public class OrderController {
@@ -29,8 +29,10 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
+    @Operation(description = "Get the list of orders of books containing buy and sell orders for a given currency pair.")
     @GetMapping(value = "/{currency}/orderbook", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getOrderBook(@PathVariable("currency") String currency) {
+    public ResponseEntity<?> getOrderBook(@Parameter(description = "Currency pair", required = true)
+                                              @PathVariable("currency") String currency) {
         CurrencyPair currencyPair = CurrencyPair.fromString(currency);
         if (currencyPair == null) {
             return badCurrencyPairResponse(currency);
@@ -39,8 +41,10 @@ public class OrderController {
         return ResponseEntity.ok(OrderBookDTO.fromOrderBook(orderBook));
     }
 
+    @Operation(description = "Get the list of most recent trades executed for a given currency pair.")
     @GetMapping("/{currency}/tradehistory")
-    public ResponseEntity<?> getTradeHistory(@PathVariable("currency") String currency) {
+    public ResponseEntity<?> getTradeHistory(@Parameter(description = "Currency pair", required = true)
+                                                 @PathVariable("currency") String currency) {
         CurrencyPair currencyPair = CurrencyPair.fromString(currency);
         if (currency == null) {
             return badCurrencyPairResponse(currency);
@@ -52,8 +56,9 @@ public class OrderController {
         return ResponseEntity.ok(tradeDTOs);
     }
 
+    @Operation(description = "Place a limit order for a particular book.")
     @PostMapping("/orders/limit")
-    public ResponseEntity<?> limitOrder(@RequestBody OrderRequestDTO orderRequest) {
+    public ResponseEntity<?> limitOrder(@Parameter(description = "Order request", required = true) @RequestBody OrderRequestDTO orderRequest) {
         Order order = orderRequest.toOrder();
         Order placedOrder = orderService.limitOrder(order);
         return ResponseEntity.ok(OrderResponseDTO.fromOrder(placedOrder));
